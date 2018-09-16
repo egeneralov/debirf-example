@@ -1,0 +1,9 @@
+.bootstrap.log
+.fakeroot-state.lir
+.packages
+iso/
+*.cgz
+*.iso
+nest/
+root/
+vmlinuz*
