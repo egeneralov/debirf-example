@@ -9,6 +9,9 @@ Do you want to have absolute disk speed nowadays, don’t you? Let's revise how 
 ## Changelog:
 
 - The language of the article is corrected in English
+- sample repository introduced at [github](https://github.com/egeneralov/debirf-example.git)
+- Added test params
+
 
 ## You must know before running this tutorial:
 
@@ -33,7 +36,6 @@ They are (optional) enable non-free components for basic installation. In additi
 - find function `create_debootstrap`
 - find line like `local OPTS="`
 - add `--components main,contrib,non-free` in brackets
-
 
 ### Up to start:
 
@@ -76,6 +78,26 @@ DEBIRF_MIRROR=http://ftp.ru.debian.org/debian/
 
 - Run `debirf make .` and go away. It need many time, at minimal 15 minutes on top hardware.
 - Run `debirf makeiso .` for create not working iso (needed for grub.cfg file)
+
+
+## Test it
+
+- Install qemu
+  - for linux: `apt-get install -yq qemu`
+  - for macos: `brew install qemu`
+- decide which resources will be allocated for VM
+  - `-smp 1` 1 real kernel
+  - `-m 1G` 1G memory
+- additional
+  - `-nographic` will launch VM in current terminal window
+  - `--enable-kvm` enables hardware accelation
+  - `-kernel vmlinuz-*` permit directly pass kernel
+  - `-initrd *.cgz` direct access to .cgz file with initramfs
+  - `-append` allows bypass kernel params, here are the parameters for running without a graphical shell
+
+The command to start the virtual machine:
+
+    qemu-system-x86_64 --enable-kvm -kernel vmlinuz-* -initrd *.cgz -append "console=tty0 console=ttyS0,115200n8" -m 1G -smp 1 -net nic,vlan=0 -net user -nographic
 
 ### Install grub to flash drive and copy LiR on it
 
