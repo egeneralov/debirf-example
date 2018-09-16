@@ -11,6 +11,7 @@ Do you want to have absolute disk speed nowadays, don’t you? Let's revise how 
 - The language of the article is corrected in English
 - sample repository introduced at [github](https://github.com/egeneralov/debirf-example.git)
 - Added test params
+- added asciicast
 
 ## You must know before running this tutorial:
 
@@ -97,6 +98,10 @@ DEBIRF_MIRROR=http://ftp.ru.debian.org/debian/
 The command to start the virtual machine:
 
     qemu-system-x86_64 --enable-kvm -kernel vmlinuz-* -initrd *.cgz -append "console=tty0 console=ttyS0,115200n8" -m 1G -smp 1 -net nic,vlan=0 -net user -nographic
+
+## Test sample
+
+[![asciicast](https://asciinema.org/a/YvChsRn942rrbEOaTVR1z1tXX.png)](https://asciinema.org/a/YvChsRn942rrbEOaTVR1z1tXX)
 
 ### Install grub to flash drive and copy LiR on it
 
