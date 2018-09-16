@@ -1,1 +1,42 @@
-/usr/share/debirf/modules/network
+#!/bin/bash -e
+
+# debirf module: network
+# setup default network interface configuration
+#
+# The debirf scripts were written by
+# Jameson Rollins <jrollins@fifthhorseman.net>
+# and
+# Daniel Kahn Gillmor <dkg@fifthhorseman.net>.
+#
+# They are Copyright 2007-2016, and are all released under the GPL,
+# version 3 or later.
+
+#DEBIRF_PACKAGE>+iproute2
+#DEBIRF_PACKAGE>+systemd
+
+# reset default udev persistent-net rule
+rm -f "${DEBIRF_ROOT}"/etc/udev/rules.d/*_persistent-net.rules
+
+# write /etc/network/interfaces
+cat <<EOF > "${DEBIRF_ROOT}/etc/systemd/network/dhcp.network"
+[Match]
+Name=e*
+
+[Network]
+DHCP=yes
+EOF
+
+ln -sf /run/systemd/resolve/resolv.conf "${DEBIRF_ROOT}/etc/resolv.conf"
+debirf_exec systemctl enable systemd-resolved.service
+
+# add network note to /etc/motd
+cat <<EOF >> "${DEBIRF_ROOT}/etc/motd"
+If you have a network interface and you want to use DHCP,
+you can bring it up with:
+
+ systemctl start systemd-networkd
+
+For more information about system network configuration,
+see ip(8) and systemd.network(5)
+==================================================
+EOF

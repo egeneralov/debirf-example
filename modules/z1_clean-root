@@ -1,1 +1,51 @@
-/usr/share/debirf/modules/z1_clean-root
+#!/bin/bash -e
+
+# debirf module: clean-root
+# clean up debirf root
+#
+# *** REQUIRED MODULE ***
+# WARNING: this module is necessary for proper functioning of debirf.
+#
+# The debirf scripts were written by
+# Jameson Rollins <jrollins@fifthhorseman.net>
+# and
+# Daniel Kahn Gillmor <dkg@fifthhorseman.net>.
+#
+# They are Copyright 2007, and are all released under the GPL,
+# version 3 or later.
+
+# remove all cached apt information
+debirf_exec apt-get --assume-yes --purge autoremove
+debirf_exec apt-get clean
+rm -f "$DEBIRF_ROOT/var/cache/apt/"*.bin
+rm -rf "$DEBIRF_ROOT/var/lib/apt/lists/"*
+mkdir "$DEBIRF_ROOT/var/lib/apt/lists/partial"
+
+# remake proc directory
+# (originally made as symlink by debootstrap with fakechroot)
+rm -rf "$DEBIRF_ROOT/proc"
+mkdir "$DEBIRF_ROOT/proc"
+
+# setup dynamically updated /etc/mtab
+ln -sf /proc/mounts "$DEBIRF_ROOT/etc/mtab"
+
+# ldconfig can't work in a fakechroot environment (see fakechroot(1))
+# So we use the build host ldconfig to setup ld.so cache
+/sbin/ldconfig -r "$DEBIRF_ROOT"
+
+# debootstrap's variant 'fakechroot' replaced ldconfig with a dummy
+# version, and ldd with a script devised for a fakechroot environment.
+# At this point we restore the original ldconfig and ldd in the final
+# debirf image, and remove diversions added by debootstrap
+# (see debootstrap 1.0.60, function install_fakechroot_tools,
+# file /usr/share/debootstrap/functions lines 1397-1582 )
+if [ "$ROOT_BUILD" != 'true' ]; then
+    debirf_exec dpkg-divert --remove /sbin/ldconfig
+    if [ -e "$DEBIRF_ROOT/sbin/ldconfig.REAL" ] ; then
+	mv -f "$DEBIRF_ROOT/sbin/ldconfig.REAL" "$DEBIRF_ROOT/sbin/ldconfig"
+    fi
+    debirf_exec dpkg-divert --remove /usr/bin/ldd
+    if [ -e "$DEBIRF_ROOT/usr/bin/ldd.REAL" ] ; then
+	mv -f "$DEBIRF_ROOT/usr/bin/ldd.REAL" "$DEBIRF_ROOT/usr/bin/ldd"
+    fi
+fi
