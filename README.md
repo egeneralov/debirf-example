@@ -263,6 +263,3 @@ LXC_DHCP_CONFILE=""
 LXC_DOMAIN="lxc"
 EOF
 ```
-
-
-
