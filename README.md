@@ -12,7 +12,6 @@ Do you want to have absolute disk speed nowadays, don’t you? Let's revise how 
 - sample repository introduced at [github](https://github.com/egeneralov/debirf-example.git)
 - Added test params
 
-
 ## You must know before running this tutorial:
 
 
